@@ -9,24 +9,24 @@ title: DMB Setlist Generator
   <form>
     <table>
       <tr>
-        <td><label>Setlist length</label></td>
-        <td><input type="range" min="5" max="25" id="setlistLength" value="20"/></td>
+        <td><label>Main Set</label></td>
+        <td><input type="number" min="5" max="25" id="setlistLength" value="20"/></td>
       </tr>
       <tr>
-        <td><label>Encore length</label></td>
-        <td><input type="range" min="1" max="4" id="encoreLength" value="3"/></td>
+        <td><label>Encore</label></td>
+        <td><input type="number" min="1" max="4" id="encoreLength" value="3"/></td>
       </tr>
       <tr>
         <td><label>Teases</label></td>
-        <td><input type="checkbox" id="teases" /></td>
+        <td><input type="checkbox" id="teases" checked /></td>
       </tr>
       <tr>
         <td><label>Partials</label></td>
-        <td><input type="checkbox" id="partials" /></td>
+        <td><input type="checkbox" id="partials" checked /></td>
       </tr>
       <tr>
         <td><label>Segues</label></td>
-        <td><input type="checkbox" id="segues" /></td>
+        <td><input type="checkbox" id="segues" checked /></td>
       </tr>
       <tr>
         <td colspan="2">
@@ -291,9 +291,10 @@ function generateSetlist(setlistLength, encoreLength, extras) {
   }
 
   return [
-    setlist.slice(0, setlist.length - encoreLength).join("\n"),
-    setlist.slice(-encoreLength).join("\n"),
-  ].join("\n------------------------\n");
+    ...setlist.slice(0, setlist.length - encoreLength),
+    "---",
+    ...setlist.slice(-encoreLength),
+  ].join("\n");
 }
 
 function update() {
@@ -315,12 +316,11 @@ async function copy() {
   } catch (error) {
     console.log("error", error);
   }
-  alert("Copied to clipboard");
 }
 
-update();
 document.getElementById("refresh").addEventListener("click", update);
-Array.from(document.getElementsByTagName("input"))
-  .forEach(() => addEventListener("change", update));
 document.getElementById("copy").addEventListener("click", copy);
+document.querySelectorAll("input").forEach((input) => input.addEventListener("change", update));
+
+update();
 </script>
