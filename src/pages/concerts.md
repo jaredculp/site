@@ -47,6 +47,9 @@ title: Concerts
 1. 2023-07-22 - Camden, NJ
 1. 2024-07-19 - Camden, NJ
 1. 2024-07-20 - Camden, NJ
+1. 2024-11-24 - New York, NY
+1. 2025-07-25 - Camden, NJ
+1. 2025-07-26 - Camden, NJ
 
 ## Everything Else
 
