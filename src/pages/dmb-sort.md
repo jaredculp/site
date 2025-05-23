@@ -5,8 +5,11 @@ title: DMB Song Sorter
 
 <style>
     .song-button {
+        border: 3px solid black;
+        text-align: center;
         width: 300px;
         font-family: 'BerkeleyMono', monospace;
+        font-weight: 800;
         padding: 3rem;
         margin: 1rem;
     }
@@ -14,8 +17,8 @@ title: DMB Song Sorter
 
 <div>
   <div id="comparison" style="display:none;">
-    <button class="song-button" id="choice1"></button>
-    <button class="song-button" id="choice2"></button>
+    <div class="song-button" id="choice1"></div>
+    <div class="song-button" id="choice2"></div>
   </div>
   <p id="progress">Loading...</p>
   <pre id="result" style="display:none;"></pre>
