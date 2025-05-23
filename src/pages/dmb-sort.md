@@ -6,13 +6,20 @@ title: DMB Song Sorter
 <style>
     .song-button {
         border: 3px solid black;
-        text-align: center;
-        width: 300px;
         font-family: 'BerkeleyMono', monospace;
         font-weight: 800;
-        padding: 3rem;
         margin: 1rem;
+        overflow-wrap: break-word;
+        padding: 3rem 0;
+        text-align: center;
+        white-space: normal;
+        width: 90%;
     }
+    @media (min-width: 768px) {
+    .song-button {
+        width: 300px;
+    }
+}
 </style>
 
 <div>
