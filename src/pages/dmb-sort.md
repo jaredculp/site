@@ -263,129 +263,81 @@ const songs = {
   ],
 };
 
-let allSongs = Object.values(songs).flat();
-let comparisonCount = 0;
-let totalComparisons = 0;
+function* sort(arr) {
+  if (arr.length <= 1) return arr;
 
-// Estimate comparisons like merge sort
+  const mid = Math.floor(arr.length / 2);
+  const left = yield* sort(arr.slice(0, mid));
+  const right = yield* sort (arr.slice(mid));
+
+  const merged = [];
+  let i = 0, j = 0;
+  while (i < left.length && j < right.length) {
+    const a = left[i];
+    const b = right[j];
+    const prefersA = yield [a, b];
+    if (prefersA) {
+      merged.push(a);
+      i++;
+    } else {
+      merged.push(b);
+      j++;
+    }
+  }
+
+  return merged.concat(left.slice(i)).concat(right.slice(j));
+}
+
 function countComparisons(n) {
   if (n <= 1) return 0;
   const mid = Math.floor(n / 2);
   return countComparisons(mid) + countComparisons(n - mid) + n - 1;
 }
 
-totalComparisons = countComparisons(allSongs.length);
+(() => {
+  const allSongs = Object.values(songs).flat();
+  const totalComparisons = countComparisons(allSongs.length);
 
-document.getElementById("progress").innerText = `0 / ${totalComparisons} comparisons`;
+  const sorter = sort(allSongs);
+  let state = sorter.next();
+  let comparisonsDone = 0;
 
-let comparisonIndex = 0;
+  function updateProgress() {
+    document.getElementById("progress").innerText = `${comparisonsDone} / ${totalComparisons} comparisons`;
+  }
 
-async function interactiveSort(list) {
-  if (list.length <= 1) return list;
+  function updateUI() {
+    const comparisonDiv = document.getElementById("comparison");
+    const choice1 = document.getElementById("choice1");
+    const choice2 = document.getElementById("choice2");
+    const progressEl = document.getElementById("progress");
+    const resultEl = document.getElementById("result");
 
-  const mid = Math.floor(list.length / 2);
-  const left = await interactiveSort(list.slice(0, mid));
-  const right = await interactiveSort(list.slice(mid));
-  return await interactiveMerge(left, right);
-}
-
-function showComparison(a, b) {
-  return new Promise((resolve) => {
-    document.getElementById("comparison").style.display = "block";
-    document.getElementById("choice1").innerText = a;
-    document.getElementById("choice2").innerText = b;
-
-    const handler = (choice) => {
-      comparisonCount++;
-      document.getElementById("progress").innerText = `${comparisonCount} / ${totalComparisons} comparisons`;
-      document.getElementById("choice1").onclick = null;
-      document.getElementById("choice2").onclick = null;
-      resolve(choice === 1 ? true : false);
-    };
-
-    document.getElementById("choice1").onclick = () => handler(1);
-    document.getElementById("choice2").onclick = () => handler(2);
-  });
-}
-
-async function interactiveMerge(left, right) {
-  let result = [];
-  let i = 0, j = 0;
-
-  while (i < left.length && j < right.length) {
-    const preferLeft = await showComparison(left[i], right[j]);
-    if (preferLeft) {
-      result.push(left[i++]);
-    } else {
-      result.push(right[j++]);
+    updateProgress();
+  
+    if (state.done) {
+      comparisonDiv.style.display = "none";
+      resultEl.style.display = "block";
+      progressEl.innerText = "";
+      resultEl.innerText = state.value.map((song, i) => `${i + 1}. ${song}`).join("\n");
+      return;
     }
+  
+    const [a, b] = state.value;
+  
+    comparisonDiv.style.display = "block";
+    resultEl.style.display = "none";
+  
+    function onClick(value) {
+      comparisonsDone++;
+      state = sorter.next(value);
+      updateUI();
+    };
+  
+    choice1.innerText = a;
+    choice1.onclick = () => onClick(true);
+    choice2.innerText = b;
+    choice2.onclick = () => onClick(false);
   }
-
-  return result.concat(left.slice(i)).concat(right.slice(j));
-}
-
-function encodeOrder(arr) {
-  const uint16 = new Uint16Array(arr);
-  let binary = '';
-  for (let i = 0; i < uint16.length; i++) {
-    binary += String.fromCharCode(uint16[i]);
-  }
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '').toLowerCase();
-}
-
-function decodeOrder(str) {
-  str = str.toUpperCase().replace(/-/g, '+').replace(/_/g, '/');
-  while (str.length % 4) {
-    str += '=';
-  }
-  const binary = atob(str);
-  const arr = new Uint16Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    arr[i] = binary.charCodeAt(i);
-  }
-  return Array.from(arr);
-}
-
-function getOrderFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('order');
-}
-
-function updateUrlWithOrder(orderStr) {
-  const url = new URL(window.location);
-  url.searchParams.set('order', orderStr);
-  window.history.replaceState({}, '', url);
-}
-
-(async () => {
-  const orderStr = getOrderFromUrl();
-
-  if (orderStr) {
-    // If order is in URL, decode and show results immediately
-    const orderIndices = decodeOrder(orderStr);
-    const sorted = orderIndices.map(i => allSongs[i]).filter(Boolean);
-
-    document.getElementById("comparison").style.display = "none";
-    document.getElementById("progress").innerText = "";
-    const resultEl = document.getElementById("result");
-    resultEl.style.display = "block";
-    const padLength = String(sorted.length).length;
-    resultEl.innerText = sorted
-      .map((s, i) => `${String(i + 1).padStart(padLength, '0')}. ${s}`)
-      .join("\n");
-  } else {
-    // No order param, do interactive sort
-    const sorted = await interactiveSort(allSongs);
-    document.getElementById("comparison").innerText = "";
-    document.getElementById("progress").innerText = "";
-
-    const resultEl = document.getElementById("result");
-    resultEl.style.display = "block";
-    resultEl.innerText = sorted.map((s, i) => `${i + 1}. ${s}`).join("\n");
-
-    // Encode sorted order and update URL
-    const orderIndices = sorted.map(song => allSongs.indexOf(song));
-    const encoded = encodeOrder(orderIndices);
-    updateUrlWithOrder(encoded);
-  }
+  updateUI();
 })();
