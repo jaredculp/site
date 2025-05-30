@@ -1,0 +1,123 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>culp.dev | dmb song ranker</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .song-button {
+        border: 3px solid black;
+        font-family: "BerkeleyMono", monospace;
+        font-weight: 800;
+        margin: 1rem;
+        overflow-wrap: break-word;
+        padding: 3rem 0;
+        text-align: center;
+        white-space: normal;
+        width: 90%;
+      }
+      @media (min-width: 768px) {
+        .song-button {
+          width: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div id="comparison" style="display: none">
+        <div class="song-button" id="choice1"></div>
+        <div class="song-button" id="choice2"></div>
+      </div>
+      <p id="progress">Loading...</p>
+      <pre id="result" style="display: none"></pre>
+    </div>
+
+    <script type="module">
+      import songs from "./dmb.js";
+
+      function* sort(arr) {
+        if (arr.length <= 1) return arr;
+
+        const mid = Math.floor(arr.length / 2);
+        const left = yield* sort(arr.slice(0, mid));
+        const right = yield* sort(arr.slice(mid));
+
+        const merged = [];
+        let i = 0,
+          j = 0;
+        while (i < left.length && j < right.length) {
+          const a = left[i];
+          const b = right[j];
+          const prefersA = yield [a, b];
+          if (prefersA) {
+            merged.push(a);
+            i++;
+          } else {
+            merged.push(b);
+            j++;
+          }
+        }
+
+        return merged.concat(left.slice(i)).concat(right.slice(j));
+      }
+
+      function countComparisons(n) {
+        if (n <= 1) return 0;
+        const mid = Math.floor(n / 2);
+        return countComparisons(mid) + countComparisons(n - mid) + n - 1;
+      }
+
+      (() => {
+        const allSongs = Object.values(songs).flat();
+        const totalComparisons = countComparisons(allSongs.length);
+
+        const sorter = sort(allSongs);
+        let state = sorter.next();
+        let comparisonsDone = 0;
+
+        function updateProgress() {
+          document.getElementById("progress").innerText =
+            `${comparisonsDone} / ${totalComparisons} comparisons`;
+        }
+
+        function updateUI() {
+          const comparisonDiv = document.getElementById("comparison");
+          const choice1 = document.getElementById("choice1");
+          const choice2 = document.getElementById("choice2");
+          const progressEl = document.getElementById("progress");
+          const resultEl = document.getElementById("result");
+
+          updateProgress();
+
+          if (state.done) {
+            comparisonDiv.style.display = "none";
+            resultEl.style.display = "block";
+            progressEl.innerText = "";
+            resultEl.innerText = state.value
+              .map((song, i) => `${i + 1}. ${song}`)
+              .join("\n");
+            return;
+          }
+
+          const [a, b] = state.value;
+
+          comparisonDiv.style.display = "block";
+          resultEl.style.display = "none";
+
+          function onClick(value) {
+            comparisonsDone++;
+            state = sorter.next(value);
+            updateUI();
+          }
+
+          choice1.innerText = a;
+          choice1.onclick = () => onClick(true);
+          choice2.innerText = b;
+          choice2.onclick = () => onClick(false);
+        }
+        updateUI();
+      })();
+    </script>
+  </body>
+</html>

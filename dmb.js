@@ -1,44 +1,3 @@
----
-layout: ../layouts/Layout.astro
-title: DMB Setlist Generator
----
-
-<div>
-  <pre id="setlist"></pre>
-  <hr />
-  <form>
-    <table>
-      <tr>
-        <td><label>Main Set</label></td>
-        <td><input type="number" min="5" max="25" id="setlistLength" value="20"/></td>
-      </tr>
-      <tr>
-        <td><label>Encore</label></td>
-        <td><input type="number" min="1" max="4" id="encoreLength" value="3"/></td>
-      </tr>
-      <tr>
-        <td><label>Teases</label></td>
-        <td><input type="checkbox" id="teases" checked /></td>
-      </tr>
-      <tr>
-        <td><label>Partials</label></td>
-        <td><input type="checkbox" id="partials" checked /></td>
-      </tr>
-      <tr>
-        <td><label>Segues</label></td>
-        <td><input type="checkbox" id="segues" checked /></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <a id="refresh">Refresh</a>
-          <a id="copy">Copy</a>
-        </td>
-      </tr>
-    </table>
-  </form>
-</div>
-
-<script>
 const songs = {
   "Remember Two Things": [
     "Recently",
@@ -235,7 +194,6 @@ const songs = {
     "Get in Line",
     "Good Good Time",
     "Heathcliff's Haiku Warriors",
-    "Improv/Jam",
     "JTR",
     "Kill the King",
     "Light Lift Me Up",
@@ -264,7 +222,6 @@ const songs = {
     "Joyride",
     "Kill the Preacher",
     "Little Red Bird",
-    "New Song",
     "Trouble With You",
     "Water Into Wine",
     "What Will Become of Me",
@@ -272,55 +229,4 @@ const songs = {
   ],
 };
 
-function generateSetlist(setlistLength, encoreLength, extras) {
-  const { teases, partials, segues } = extras;
-  const setlist = [];
-
-  const albums = Object.keys(songs);
-  while (setlist.length != setlistLength) {
-    const album = albums[Math.floor(Math.random() * albums.length)];
-    const albumSongs = songs[album];
-    const song = albumSongs[Math.floor(Math.random() * albumSongs.length)];
-
-    if (setlist.some((s) => s === song)) continue;
-
-    const tease = teases && Math.random() < 0.03 ? " [tease]" : "";
-    const partial = partials && !tease && Math.random() < 0.01 ? " [partial]" : "";
-    const segue = segues && Math.random() < 0.03 ? " »" : "";
-    setlist.push(`${song}${tease}${partial}${segue}`);
-  }
-
-  return [
-    ...setlist.slice(0, setlist.length - encoreLength),
-    "---",
-    ...setlist.slice(-encoreLength),
-  ].join("\n");
-}
-
-function update() {
-  document.getElementById("setlist").innerHTML = generateSetlist(
-    document.getElementById("setlistLength").value,
-    document.getElementById("encoreLength").value,
-    {
-      teases: document.getElementById("teases").checked,
-      partials: document.getElementById("partials").checked,
-      segues: document.getElementById("segues").checked,
-    },
-  );
-}
-
-async function copy() {
-  const text = document.getElementById("setlist").innerHTML;
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (error) {
-    console.log("error", error);
-  }
-}
-
-document.getElementById("refresh").addEventListener("click", update);
-document.getElementById("copy").addEventListener("click", copy);
-document.querySelectorAll("input").forEach((input) => input.addEventListener("change", update));
-
-update();
-</script>
+export default songs;
