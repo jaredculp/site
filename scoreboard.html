@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: monospace;
+      }
+      scoreboard {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        team {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 8vw;
+
+          &:first-child {
+            background: black;
+            color: white;
+          }
+          &:nth-child(2) {
+            background: white;
+            color: black;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <scoreboard>
+      <team>0</team>
+      <team>0</team>
+    </scoreboard>
+
+    <script>
+      const [team1, team2] = Array.from(document.querySelectorAll("team"));
+      let gameOver = false;
+      function handleClick(a, b) {
+        if (gameOver) return;
+
+        const aScore = parseInt(a.textContent) + 1;
+        const bScore = parseInt(b.textContent);
+
+        if (aScore >= 21 && aScore - bScore >= 2) {
+          a.style.backgroundColor = "green";
+          a.style.color = "white";
+          a.textContent = `${aScore} 🏆`;
+          gameOver = true;
+        } else {
+          a.textContent = aScore;
+        }
+      }
+      team1.addEventListener("click", () => handleClick(team1, team2));
+      team2.addEventListener("click", () => handleClick(team2, team1));
+    </script>
+  </body>
+</html>
