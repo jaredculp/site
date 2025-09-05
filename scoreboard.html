@@ -16,7 +16,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 8vw;
+          font-size: 10vmax;
 
           &:first-child {
             background: black;
@@ -26,6 +26,12 @@
             background: white;
             color: black;
           }
+        }
+      }
+
+      @media (max-width: 600px) {
+        scoreboard {
+          flex-direction: column;
         }
       }
     </style>
