@@ -27,8 +27,8 @@
 }
 
 :root {
-  --primary-color: #353535;
-  --secondary-color: #fffaee;
+  --secondary-color: #353535;
+  --primary-color: #fffaee;
 }
 
 body {
@@ -38,6 +38,7 @@ body {
   line-height: 2;
   max-width: 60em;
   padding: 1em;
+  font-size: 13px;
 }
 
 pre {
@@ -65,9 +66,4 @@ a {
 
 hr {
   border: 1px solid var(--primary-color);
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
 }
