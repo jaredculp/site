@@ -1,49 +1,15 @@
-@font-face {
-  font-family: "BerkeleyMono";
-  src: url("/fonts/BerkeleyMono-Bold.woff2") format("woff2");
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "BerkeleyMono";
-  src: url("/fonts/BerkeleyMono-BoldItalic.woff2") format("woff2");
-  font-weight: bold;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "BerkeleyMono";
-  src: url("/fonts/BerkeleyMono-Italic.woff2") format("woff2");
-  font-weight: normal;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "BerkeleyMono";
-  src: url("/fonts/BerkeleyMono-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-}
-
 :root {
-  --secondary-color: #353535;
   --primary-color: #fffaee;
+  --secondary-color: #353535;
+  --highlight-color: #ff851b;
 }
 
 body {
   color: var(--primary-color);
   background-color: var(--secondary-color);
-  font-family: "BerkeleyMono", monospace;
-  line-height: 2;
-  max-width: 60em;
-  padding: 1em;
-  font-size: 13px;
-}
-
-pre {
-  font-family: "BerkeleyMono", monospace;
-  line-height: 1;
+  font-family: monospace;
+  line-height: 1.6;
+  max-width: 600px;
 }
 
 h1,
@@ -58,12 +24,12 @@ span {
 
 a {
   text-decoration: none;
-  color: var(--secondary-color);
-  background-color: var(--primary-color);
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--highlight-color);
+  padding-bottom: 3px;
   font-weight: bold;
-  padding: 2px 4px;
 }
 
 hr {
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--highlight-color);
 }
