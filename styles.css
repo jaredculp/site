@@ -1,18 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
 :root {
-  --primary-color: #fffaee;
-  --secondary-color: #001f3f;
-  --highlight-color: #ff851b;
+  --primary-color: #111;
+  --secondary-color: #fff;
+  --highlight-color: #ddd;
 }
 
 body {
   color: var(--primary-color);
   background-color: var(--secondary-color);
-  font-family: "Special Elite", monospace;
-  font-size: 20px;
-  line-height: 1.6;
-  max-width: 700px;
+  font-family: sans-serif, "Special Elite", monospace;
+  line-height: 1.8;
+  max-width: 600px;
   padding: 40px 20px;
   margin: 0 auto;
 }
@@ -28,13 +27,11 @@ span {
 }
 
 a {
-  background-color: var(--highlight-color);
-  border-radius: 8px;
-  color: var(--secondary-color);
-  padding: 4px 6px;
+  color: var(--primary-color);
   text-decoration: none;
+  border-bottom: 3px solid var(--highlight-color);
 }
 
 hr {
-  border: 1px solid var(--highlight-color);
+  border: 2px dashed var(--highlight-color);
 }

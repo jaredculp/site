@@ -19,12 +19,12 @@
           font-size: 10vmax;
 
           &:first-child {
-            background: black;
-            color: white;
+            background: #111;
+            color: #fff;
           }
           &:nth-child(2) {
-            background: white;
-            color: black;
+            background: #fff;
+            color: #111;
           }
         }
       }
@@ -52,8 +52,8 @@
         const bScore = parseInt(b.textContent);
 
         if (aScore >= 21 && aScore - bScore >= 2) {
-          a.style.backgroundColor = "green";
-          a.style.color = "white";
+          a.style.backgroundColor = "#3d9970";
+          a.style.color = "#fff";
           a.textContent = `${aScore} 🏆`;
           gameOver = true;
         } else {
